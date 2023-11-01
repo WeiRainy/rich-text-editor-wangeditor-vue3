@@ -1,11 +1,13 @@
 <template>
     <div>
-        <div>
-          <input type="text" v-model="filenameRef"/>
-          <span>.html</span>
-          <button @click="saveHtml">Save html</button>
-        </div>
-        <div style="border: 1px solid #ccc; margin-top: 10px;">
+        <n-card>
+          <n-space>
+          <n-input type="text" v-model:value="filenameRef" placeholder="filename to save"/>
+          <n-tag type="success" round>.html</n-tag>
+          <n-button @click="saveHtml" type="success">Save html</n-button>
+          </n-space>
+        </n-card>
+          <n-card>
             <Toolbar
                 :editor="editorRef"
                 :defaultConfig="toolbarConfig"
@@ -19,11 +21,12 @@
                 style="height: 400px; overflow-y: hidden;"
                 @onCreated="handleCreated"
                 @customPaste="customPaste"/>
+          </n-card>
 
-        </div>
-        <div style="margin-top: 10px;">
-            <textarea v-model="valueHtml" readonly style="width: 100%; height: 200px; outline: none;"></textarea>
-        </div>
+        <n-card>
+          HTML 代码预览：
+          <n-input v-model:value="valueHtml" type="textarea" readonly></n-input>
+        </n-card>
     </div>
 </template>
 
@@ -76,7 +79,7 @@ export default {
     const saveHtml = () => {
       const editor = editorRef.value
       if (editor == null) return
-      console.log(filenameRef.value)
+      console.log(editorRef.value)
       const file = new File([editor.getHtml()], `${filenameRef.value}.html`, {type: "html/plain; charset=utf-8"})
       FileSaver.saveAs(file)
     }
@@ -91,7 +94,12 @@ export default {
       handleCreated,
       customPaste,
       saveHtml,
+      value: ref()
     };
   }
 }
 </script>
+
+<style scoped>
+
+</style>

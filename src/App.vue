@@ -1,9 +1,16 @@
 <template>
-  <div>
-    Eagle Rich-Text Editor (with exporting HTML)
-  </div>
-  <hr>
+  <div id="whole">
+    <n-card>
+      <n-page-header @back="handleBack">
+        <template #title>
+          Eagle Rich-Text Editor<sub style="margin-left: 1em">by Liwei</sub>
+        </template>
+      </n-page-header>
 
+
+      <span>with exporting HTML and file protocol link support</span>
+    </n-card>
+  </div>
   <BasicEditor></BasicEditor>
 </template>
 
@@ -16,17 +23,16 @@ export default {
     BasicEditor,
   },
   data() {
-    // return {
-    //   show: true
-    // }
+
   },
   methods: {
-    // toggle() {
-    //   this.show = !this.show
-    // }
+
   }
 }
 </script>
 
 <style>
+#whole {
+  width: 80%;
+}
 </style>
