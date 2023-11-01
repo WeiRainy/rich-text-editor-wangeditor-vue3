@@ -1,9 +1,9 @@
 <template>
     <div>
         <div>
-            <button @click="insertText">insert text</button>
-            <button @click="printHtml">print html</button>
-            <button @click="disable">disable</button>
+          <input type="text" v-model="filenameRef"/>
+          <span>.html</span>
+          <button @click="saveHtml">Save html</button>
         </div>
         <div style="border: 1px solid #ccc; margin-top: 10px;">
             <Toolbar
@@ -18,13 +18,8 @@
                 v-model="valueHtml"
                 style="height: 400px; overflow-y: hidden;"
                 @onCreated="handleCreated"
-                @onChange="handleChange"
-                @onDestroyed="handleDestroyed"
-                @onFocus="handleFocus"
-                @onBlur="handleBlur"
-                @customAlert="customAlert"
-                @customPaste="customPaste"
-            />
+                @customPaste="customPaste"/>
+
         </div>
         <div style="margin-top: 10px;">
             <textarea v-model="valueHtml" readonly style="width: 100%; height: 200px; outline: none;"></textarea>
@@ -34,24 +29,18 @@
 
 <script>
 import '@wangeditor/editor/dist/css/style.css'
-import { onBeforeUnmount, ref, shallowRef, onMounted } from 'vue'
+import { onBeforeUnmount, ref, shallowRef } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import * as FileSaver from 'file-saver'
 
 export default {
   components: { Editor, Toolbar },
   setup() {
     // 编辑器实例，必须用 shallowRef，重要！
     const editorRef = shallowRef()
-
+    const filenameRef = ref()
     // 内容 HTML
-    const valueHtml = ref('<p>hello</p>')
-
-    // 模拟 ajax 异步获取内容
-    onMounted(() => {
-        setTimeout(() => {
-            valueHtml.value = '<p>模拟 Ajax 异步设置内容</p>'
-        }, 1500)
-    })
+    const valueHtml = ref()
 
     const toolbarConfig = {}
     const editorConfig = { placeholder: '请输入内容...' }
@@ -64,71 +53,44 @@ export default {
         editor.destroy()
     })
 
-    // 编辑器回调函数
-    const handleCreated = (editor) => {
-      console.log('created', editor);
-      editorRef.value = editor // 记录 editor 实例，重要！
-    }
-    const handleChange = (editor) => {
-      console.log('change:', editor.getHtml());
-    }
-    const handleDestroyed = (editor) => {
-      console.log('destroyed', editor)
-    }
-    const handleFocus = (editor) => {
-        console.log('focus', editor)
-    }
-    const handleBlur = (editor) => {
-        console.log('blur', editor)
-    }
-    const customAlert = (info, type) => {
-        alert(`【自定义提示】${type} - ${info}`)
-    }
     const customPaste = (editor, event, callback) => {
-        console.log('ClipboardEvent 粘贴事件对象', event)
-
-        // 自定义插入内容
-        editor.insertText('xxx')
-
+        // console.log('ClipboardEvent 粘贴事件对象', event)
+        const plainTextFromPaste = event.clipboardData.getData('text/plain')
+        if (plainTextFromPaste.startsWith("file:///")) {
+          editor.insertNode({
+            type: 'link',
+            url: plainTextFromPaste,
+            target: "_blank",
+            children: [{'text': plainTextFromPaste}]
+          });
+          callback(false)
+        }
         // 返回值（注意，vue 事件的返回值，不能用 return）
-        callback(false) // 返回 false ，阻止默认粘贴行为
-        // callback(true) // 返回 true ，继续默认的粘贴行为
+        // callback(false) // 返回 false ，阻止默认粘贴行为
+        else callback(true) // 返回 true ，继续默认的粘贴行为
     }
-
-    const insertText = () => {
-        const editor = editorRef.value
-        if (editor == null) return
-        editor.insertText('hello world')
-    }
-
-    const printHtml = () => {
-        const editor = editorRef.value
-        if (editor == null) return
-        console.log(editor.getHtml())
-    }
-
-    const disable = () => {
-        const editor = editorRef.value
-        if (editor == null) return
-        editor.disable()
+    const handleCreated = (editor) => {
+      // 记录 editor 实例，重要！
+      editorRef.value = editor;
+    };
+    const saveHtml = () => {
+      const editor = editorRef.value
+      if (editor == null) return
+      console.log(filenameRef.value)
+      const file = new File([editor.getHtml()], `${filenameRef.value}.html`, {type: "html/plain; charset=utf-8"})
+      FileSaver.saveAs(file)
     }
 
     return {
       editorRef,
-      mode: 'default',
+      mode: 'simple',
       valueHtml,
       toolbarConfig,
       editorConfig,
+      filenameRef,
       handleCreated,
-      handleChange,
-      handleDestroyed,
-      handleFocus,
-      handleBlur,
-      customAlert,
       customPaste,
-      insertText,
-      printHtml,
-      disable,
+      saveHtml,
     };
   }
 }

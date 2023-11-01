@@ -1,33 +1,29 @@
 <template>
   <div>
-    wangEditor for vue3
-    <button @click="toggle">显示/隐藏</button>
+    Eagle Rich-Text Editor (with exporting HTML)
   </div>
   <hr>
 
-  <BasicEditor v-if="show"></BasicEditor>
-  <!-- <ExtendedEditor v-if="show"></ExtendedEditor> -->
+  <BasicEditor></BasicEditor>
 </template>
 
 <script>
-import BasicEditor from './components/BasicEditor.vue'
-// import ExtendedEditor from './components/ExtendedEditor.vue'
+import BasicEditor from '@/components/BasicEditor.vue'
 
 export default {
   name: 'App',
   components: {
     BasicEditor,
-    // ExtendedEditor,
   },
   data() {
-    return {
-      show: true
-    }
+    // return {
+    //   show: true
+    // }
   },
   methods: {
-    toggle() {
-      this.show = !this.show
-    }
+    // toggle() {
+    //   this.show = !this.show
+    // }
   }
 }
 </script>
