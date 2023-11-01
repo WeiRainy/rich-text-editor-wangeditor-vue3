@@ -1,6 +1,4 @@
-# Vue3 wangEditor demo
-
-本项目通过 [Vue-cli](https://cli.vuejs.org/zh/) 创建。
+# Vue3 wangEditor 
 
 ## 本地运行
 
@@ -9,6 +7,15 @@ yarn install
 yarn serve
 ```
 
-## 参考
+### build and serve
+```bash
+yarn build
+```
 
+---
+## 支持特性
+- 粘贴`file:///`链接后会自动转换为 `<a></a>`标签
+- 可快速将目前的结果保存为 html 文件
+
+## 参考
 - [文档](https://www.wangeditor.com/v5/guide/for-frame.html#vue3)
